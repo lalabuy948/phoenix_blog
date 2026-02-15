@@ -1,0 +1,112 @@
+/* PhoenixBlog - Minimal styles for the blog engine */
+
+/* Slide-in animation for flash messages */
+@keyframes phoenix-blog-slide-in {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.animate-slide-in {
+  animation: phoenix-blog-slide-in 0.3s ease-out;
+}
+
+/* Editor.js overrides for consistent styling */
+.codex-editor__redactor {
+  padding-bottom: 100px !important;
+}
+
+/*
+ * Editor.js text color — driven by CSS custom properties.
+ * The JS hook (PhoenixBlogEditor) detects the actual background luminance
+ * and sets --phxblog-text / --phxblog-muted / --phxblog-placeholder on the
+ * holder element, so colours always match regardless of how the host app
+ * handles dark mode (media query, .dark class, data-theme, or none).
+ * The fallback values (second arg of var()) are light-mode defaults.
+ */
+.codex-editor,
+.codex-editor *,
+.ce-block__content,
+.ce-paragraph,
+.ce-header,
+.ce-block [contenteditable] {
+  color: var(--phxblog-text, #111827) !important;
+}
+
+.ce-paragraph[data-placeholder]::before {
+  color: var(--phxblog-placeholder, #9ca3af) !important;
+}
+
+.ce-toolbar__plus,
+.ce-toolbar__settings-btn {
+  color: var(--phxblog-muted, #6b7280) !important;
+}
+
+.ce-toolbar__plus:hover,
+.ce-toolbar__settings-btn:hover {
+  color: var(--phxblog-text, #111827) !important;
+}
+
+/* Line clamp utilities (for browsers without Tailwind) */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Aspect ratio for embeds */
+.aspect-video {
+  aspect-ratio: 16 / 9;
+}
+
+/* Prose-like content styling for blog posts */
+.phoenix-blog-content img {
+  max-width: 100%;
+  height: auto;
+}
+
+.phoenix-blog-content a {
+  color: #4f46e5;
+  text-decoration: underline;
+}
+
+.phoenix-blog-content a:hover {
+  color: #4338ca;
+}
+
+/* Dark theme link colors via prefers-color-scheme (Tailwind v4 default) */
+@media (prefers-color-scheme: dark) {
+  .phoenix-blog-content a {
+    color: #818cf8;
+  }
+
+  .phoenix-blog-content a:hover {
+    color: #a5b4fc;
+  }
+}
+
+/* Dark theme link colors via class / data-theme (Tailwind v3 / daisyUI) */
+.dark .phoenix-blog-content a,
+[data-theme="dark"] .phoenix-blog-content a {
+  color: #818cf8;
+}
+
+.dark .phoenix-blog-content a:hover,
+[data-theme="dark"] .phoenix-blog-content a:hover {
+  color: #a5b4fc;
+}

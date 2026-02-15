@@ -1,0 +1,44 @@
+defmodule PhoenixBlog.Web do
+  @moduledoc false
+
+  def live_view do
+    quote do
+      use Phoenix.LiveView, layout: {PhoenixBlog.Web.Layouts, :app}
+      unquote(html_helpers())
+    end
+  end
+
+  def live_component do
+    quote do
+      use Phoenix.LiveComponent
+      unquote(html_helpers())
+    end
+  end
+
+  def html do
+    quote do
+      import Phoenix.Controller, only: [get_csrf_token: 0]
+      unquote(html_helpers())
+    end
+  end
+
+  def router do
+    quote do
+      import PhoenixBlog.Web.Router
+    end
+  end
+
+  defp html_helpers do
+    quote do
+      use Phoenix.Component
+      import Phoenix.HTML
+      import PhoenixBlog.Web.CoreComponents
+      import PhoenixBlog.Web.BlogComponents
+      alias Phoenix.LiveView.JS
+    end
+  end
+
+  defmacro __using__(which) when is_atom(which) do
+    apply(__MODULE__, which, [])
+  end
+end
