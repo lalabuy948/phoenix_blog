@@ -15,4 +15,20 @@ defmodule PhoenixBlog.Config do
   def table_name do
     Application.get_env(:phoenix_blog, :table_name, "phoenix_blog_posts")
   end
+
+  def site_name do
+    Application.get_env(:phoenix_blog, :site_name, "Blog")
+  end
+
+  def default_og_image do
+    Application.get_env(:phoenix_blog, :default_og_image, nil)
+  end
+
+  def twitter_site do
+    Application.get_env(:phoenix_blog, :twitter_site, nil)
+  end
+
+  def locale do
+    Application.get_env(:phoenix_blog, :locale, "en_US")
+  end
 end

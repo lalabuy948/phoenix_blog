@@ -90,5 +90,4 @@ defmodule PhoenixBlog.Web.Components.RecentPosts do
     </section>
     """
   end
-
 end

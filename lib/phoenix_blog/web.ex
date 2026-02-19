@@ -34,6 +34,7 @@ defmodule PhoenixBlog.Web do
       import Phoenix.HTML
       import PhoenixBlog.Web.CoreComponents
       import PhoenixBlog.Web.BlogComponents
+      alias PhoenixBlog.Web.SEO
       alias Phoenix.LiveView.JS
     end
   end

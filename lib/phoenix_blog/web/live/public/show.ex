@@ -4,23 +4,25 @@ defmodule PhoenixBlog.Web.Live.Public.Show do
   import PhoenixBlog.Web.Components.BlogPost
 
   @impl true
-  def mount(%{"slug" => slug}, _session, socket) do
-    try do
-      post = PhoenixBlog.get_post_by_slug!(slug)
+  def mount(_params, _session, socket) do
+    {:ok, socket}
+  end
 
-      socket =
-        socket
-        |> assign(:post, post)
-        |> assign(:page_title, post.title)
+  @impl true
+  def handle_params(%{"slug" => slug}, uri, socket) do
+    post = PhoenixBlog.get_post_by_slug!(slug)
 
-      {:ok, socket}
-    rescue
-      Ecto.NoResultsError ->
-        {:ok,
-         socket
-         |> put_flash(:error, "Post not found")
-         |> redirect(to: socket.assigns.blog_path || "/")}
-    end
+    {:noreply,
+     socket
+     |> assign(:post, post)
+     |> assign(:page_title, post.title)
+     |> PhoenixBlog.Web.SEO.assign_seo(post, uri)}
+  rescue
+    Ecto.NoResultsError ->
+      {:noreply,
+       socket
+       |> put_flash(:error, "Post not found")
+       |> push_navigate(to: socket.assigns.blog_path || "/")}
   end
 
   @impl true

@@ -84,7 +84,10 @@ defmodule PhoenixBlog.Web.Components.BlogPost do
       </div>
 
       <%!-- Tags Footer --%>
-      <div :if={@show_tags_footer && @post.tags != []} class="border-t border-gray-200 dark:border-gray-700 pt-8 mt-12">
+      <div
+        :if={@show_tags_footer && @post.tags != []}
+        class="border-t border-gray-200 dark:border-gray-700 pt-8 mt-12"
+      >
         <h3 class="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-3">Tags</h3>
         <div class="flex flex-wrap gap-2">
           <a

@@ -139,7 +139,11 @@ defmodule PhoenixBlog.Web.Components.BlogFeed do
     ~H"""
     <div id={@id} class={@class}>
       <%!-- Hero --%>
-      <section :if={@show_hero} class="bg-gradient-to-br from-indigo-600 via-purple-600 to-purple-700 pt-16 sm:pt-20 mb-10 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8" style={if(@show_search, do: "padding-bottom: 3.5rem;", else: "padding-bottom: 4rem;")}>
+      <section
+        :if={@show_hero}
+        class="bg-gradient-to-br from-indigo-600 via-purple-600 to-purple-700 pt-16 sm:pt-20 mb-10 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8"
+        style={if(@show_search, do: "padding-bottom: 3.5rem;", else: "padding-bottom: 4rem;")}
+      >
         <div class="max-w-5xl mx-auto text-center">
           <h1 class="text-4xl sm:text-5xl font-extrabold text-white tracking-tight mb-3">Blog</h1>
           <p class="text-lg text-indigo-100/90 max-w-2xl mx-auto mb-8">
@@ -170,7 +174,10 @@ defmodule PhoenixBlog.Web.Components.BlogFeed do
               value={@search}
               class="w-full pl-12 pr-4 py-3.5 text-base text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-800 rounded-xl border-0 shadow-lg focus:ring-2 focus:ring-white/50 placeholder:text-gray-400"
             />
-            <.icon name="hero-magnifying-glass" class="absolute left-4 top-1/2 -translate-y-1/2 size-5 text-gray-400" />
+            <.icon
+              name="hero-magnifying-glass"
+              class="absolute left-4 top-1/2 -translate-y-1/2 size-5 text-gray-400"
+            />
           </.form>
         </div>
       </section>
@@ -193,7 +200,10 @@ defmodule PhoenixBlog.Web.Components.BlogFeed do
           value={@search}
           class="w-full pl-12 pr-4 py-3.5 text-base text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm focus:ring-2 focus:ring-indigo-300 placeholder:text-gray-400"
         />
-        <.icon name="hero-magnifying-glass" class="absolute left-4 top-1/2 -translate-y-1/2 size-5 text-gray-400" />
+        <.icon
+          name="hero-magnifying-glass"
+          class="absolute left-4 top-1/2 -translate-y-1/2 size-5 text-gray-400"
+        />
       </.form>
 
       <%!-- Tag Filters --%>
@@ -206,7 +216,8 @@ defmodule PhoenixBlog.Web.Components.BlogFeed do
             "px-4 py-2 rounded-full text-sm font-medium transition-all whitespace-nowrap",
             if(is_nil(@tag_filter),
               do: "bg-indigo-600 text-white shadow",
-              else: "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
+              else:
+                "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
             )
           ]}
         >
@@ -221,7 +232,8 @@ defmodule PhoenixBlog.Web.Components.BlogFeed do
             "px-4 py-2 rounded-full text-sm font-medium transition-all whitespace-nowrap",
             if(@tag_filter == tag,
               do: "bg-indigo-600 text-white shadow",
-              else: "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
+              else:
+                "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
             )
           ]}
         >
@@ -238,8 +250,12 @@ defmodule PhoenixBlog.Web.Components.BlogFeed do
             <div class="w-20 h-20 mx-auto mb-5 rounded-2xl bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
               <.icon name="hero-document-text" class="size-9 text-gray-400" />
             </div>
-            <h3 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">No articles found</h3>
-            <p class="text-gray-500 dark:text-gray-400 max-w-sm mx-auto">Try adjusting your search or filters to find what you're looking for.</p>
+            <h3 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
+              No articles found
+            </h3>
+            <p class="text-gray-500 dark:text-gray-400 max-w-sm mx-auto">
+              Try adjusting your search or filters to find what you're looking for.
+            </p>
           </div>
         <% end %>
       <% else %>
@@ -306,7 +322,8 @@ defmodule PhoenixBlog.Web.Components.BlogFeed do
               "inline-flex items-center gap-1.5 px-5 py-2.5 rounded-lg text-sm font-medium transition-all",
               if(@page == 1,
                 do: "opacity-40 cursor-not-allowed text-gray-400",
-                else: "text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 shadow-sm"
+                else:
+                  "text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 shadow-sm"
               )
             ]}
           >
@@ -325,7 +342,8 @@ defmodule PhoenixBlog.Web.Components.BlogFeed do
               "inline-flex items-center gap-1.5 px-5 py-2.5 rounded-lg text-sm font-medium transition-all",
               if(@page >= @total_pages,
                 do: "opacity-40 cursor-not-allowed text-gray-400",
-                else: "text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 shadow-sm"
+                else:
+                  "text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 shadow-sm"
               )
             ]}
           >

@@ -26,7 +26,8 @@ defmodule PhoenixBlog.Web.Router do
 
     * `:on_mount` - Additional on_mount hooks (default: [])
     * `:as` - Live session name (default: :phoenix_blog)
-    * `:layout` - Override the layout module
+    * `:layout` - Override the app layout module
+    * `:root_layout` - Override the root layout (default: uses your app's root layout)
     * `:index_view` - Custom LiveView module for the blog index (default: `PhoenixBlog.Web.Live.Public.Index`)
     * `:show_view` - Custom LiveView module for the blog post page (default: `PhoenixBlog.Web.Live.Public.Show`)
 
@@ -45,6 +46,7 @@ defmodule PhoenixBlog.Web.Router do
       custom_on_mount = Keyword.get(opts, :on_mount, [])
       session_name = Keyword.get(opts, :as, :phoenix_blog)
       layout = Keyword.get(opts, :layout)
+      root_layout = Keyword.get(opts, :root_layout)
       index_view = Keyword.get(opts, :index_view, PhoenixBlog.Web.Live.Public.Index)
       show_view = Keyword.get(opts, :show_view, PhoenixBlog.Web.Live.Public.Show)
 
@@ -53,6 +55,9 @@ defmodule PhoenixBlog.Web.Router do
 
       session_opts =
         [on_mount: on_mount]
+        |> then(fn opts ->
+          if root_layout, do: Keyword.put(opts, :root_layout, root_layout), else: opts
+        end)
         |> then(fn opts -> if layout, do: Keyword.put(opts, :layout, layout), else: opts end)
 
       scope path, alias: false, as: false do

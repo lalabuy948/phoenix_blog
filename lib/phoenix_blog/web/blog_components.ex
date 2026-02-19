@@ -161,7 +161,10 @@ defmodule PhoenixBlog.Web.BlogComponents do
       <table class="w-full border-collapse">
         <tbody>
           <tr :for={row <- @rows} class="border-b border-gray-200 dark:border-gray-700">
-            <td :for={cell <- row} class="border border-gray-200 dark:border-gray-700 px-4 py-2 text-gray-700 dark:text-gray-300">
+            <td
+              :for={cell <- row}
+              class="border border-gray-200 dark:border-gray-700 px-4 py-2 text-gray-700 dark:text-gray-300"
+            >
               {raw(cell)}
             </td>
           </tr>
@@ -228,7 +231,14 @@ defmodule PhoenixBlog.Web.BlogComponents do
           <div class="p-4 bg-gray-100 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
             <p class="text-sm text-gray-600 dark:text-gray-400">
               Embedded content:
-              <a href={@source} target="_blank" rel="noopener noreferrer" class="text-indigo-600 dark:text-indigo-400 underline">{@source}</a>
+              <a
+                href={@source}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="text-indigo-600 dark:text-indigo-400 underline"
+              >
+                {@source}
+              </a>
             </p>
           </div>
       <% end %>
@@ -245,7 +255,10 @@ defmodule PhoenixBlog.Web.BlogComponents do
     ~H"""
     <figure class="my-8">
       <img src={@url} alt={@caption} class="w-full rounded-lg shadow-lg" />
-      <figcaption :if={@caption != ""} class="text-center text-sm text-gray-500 dark:text-gray-400 mt-2">
+      <figcaption
+        :if={@caption != ""}
+        class="text-center text-sm text-gray-500 dark:text-gray-400 mt-2"
+      >
         {@caption}
       </figcaption>
     </figure>

@@ -9,6 +9,11 @@ defmodule PhoenixBlog.Web.Live.Public.Index do
   end
 
   @impl true
+  def handle_params(_params, uri, socket) do
+    {:noreply, PhoenixBlog.Web.SEO.assign_seo(socket, :index, uri)}
+  end
+
+  @impl true
   def render(assigns) do
     ~H"""
     <div class="min-h-screen bg-gray-50 dark:bg-gray-950">

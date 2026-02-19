@@ -7,6 +7,8 @@
     <.live_title default="Blog">
       {assigns[:page_title]}
     </.live_title>
+    <PhoenixBlog.Web.SEO.meta_tags seo={assigns[:seo]} />
+    <PhoenixBlog.Web.SEO.json_ld seo={assigns[:seo]} />
     <link rel="stylesheet" href="/phoenix_blog/app.css" />
   </head>
   <body class="h-full bg-gray-50 text-gray-900 antialiased">

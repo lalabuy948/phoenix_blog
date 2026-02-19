@@ -220,11 +220,17 @@ defmodule PhoenixBlog.Web.Live.Admin.Form do
             </div>
 
             <div class="flex items-center gap-3">
-              <div :if={@last_saved_at} class="flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-400">
+              <div
+                :if={@last_saved_at}
+                class="flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-400"
+              >
                 <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
                 Saved {format_time_ago(@last_saved_at)}
               </div>
-              <span :if={!@last_saved_at && @action == :new} class="text-xs text-amber-600 dark:text-amber-400 font-medium">
+              <span
+                :if={!@last_saved_at && @action == :new}
+                class="text-xs text-amber-600 dark:text-amber-400 font-medium"
+              >
                 Unsaved draft
               </span>
             </div>
@@ -259,7 +265,9 @@ defmodule PhoenixBlog.Web.Live.Admin.Form do
               <%!-- Editor --%>
               <div class="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm">
                 <div class="px-6 py-3 border-b border-gray-100 dark:border-gray-800 bg-gray-50/60 dark:bg-gray-800/60">
-                  <span class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">Content</span>
+                  <span class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                    Content
+                  </span>
                 </div>
                 <div
                   id="phoenix-blog-editor"
@@ -299,7 +307,9 @@ defmodule PhoenixBlog.Web.Live.Admin.Form do
                 <%!-- Publishing --%>
                 <div class="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm">
                   <div class="px-5 py-3 border-b border-gray-100 dark:border-gray-800">
-                    <h3 class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">Publishing</h3>
+                    <h3 class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                      Publishing
+                    </h3>
                   </div>
                   <div class="p-5 space-y-4">
                     <.input
@@ -339,7 +349,9 @@ defmodule PhoenixBlog.Web.Live.Admin.Form do
                 <%!-- SEO & Metadata --%>
                 <div class="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm">
                   <div class="px-5 py-3 border-b border-gray-100 dark:border-gray-800">
-                    <h3 class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">SEO &amp; Metadata</h3>
+                    <h3 class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                      SEO &amp; Metadata
+                    </h3>
                   </div>
                   <div class="p-5 space-y-4">
                     <.input
@@ -367,7 +379,9 @@ defmodule PhoenixBlog.Web.Live.Admin.Form do
                 <%!-- Featured Image --%>
                 <div class="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm">
                   <div class="px-5 py-3 border-b border-gray-100 dark:border-gray-800">
-                    <h3 class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">Featured Image</h3>
+                    <h3 class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                      Featured Image
+                    </h3>
                   </div>
                   <div class="p-5">
                     <.input
@@ -376,7 +390,10 @@ defmodule PhoenixBlog.Web.Live.Admin.Form do
                       label="Image URL"
                       placeholder="https://example.com/image.jpg"
                     />
-                    <div :if={@form[:featured_image_url].value && @form[:featured_image_url].value != ""} class="mt-3">
+                    <div
+                      :if={@form[:featured_image_url].value && @form[:featured_image_url].value != ""}
+                      class="mt-3"
+                    >
                       <img
                         src={@form[:featured_image_url].value}
                         alt="Preview"
@@ -384,7 +401,12 @@ defmodule PhoenixBlog.Web.Live.Admin.Form do
                         onerror="this.style.display='none'"
                       />
                     </div>
-                    <div :if={!@form[:featured_image_url].value || @form[:featured_image_url].value == ""} class="mt-3 flex items-center justify-center h-24 rounded-lg border-2 border-dashed border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
+                    <div
+                      :if={
+                        !@form[:featured_image_url].value || @form[:featured_image_url].value == ""
+                      }
+                      class="mt-3 flex items-center justify-center h-24 rounded-lg border-2 border-dashed border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800"
+                    >
                       <span class="text-xs text-gray-400 dark:text-gray-500">No image set</span>
                     </div>
                   </div>

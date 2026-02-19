@@ -37,9 +37,17 @@ defmodule PhoenixBlog.Web.CoreComponents do
     """
   end
 
-  defp flash_class("info"), do: "bg-blue-50 dark:bg-blue-950 text-blue-800 dark:text-blue-200 border border-blue-200 dark:border-blue-800"
-  defp flash_class("error"), do: "bg-red-50 dark:bg-red-950 text-red-800 dark:text-red-200 border border-red-200 dark:border-red-800"
-  defp flash_class(_), do: "bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200 border border-gray-200 dark:border-gray-700"
+  defp flash_class("info"),
+    do:
+      "bg-blue-50 dark:bg-blue-950 text-blue-800 dark:text-blue-200 border border-blue-200 dark:border-blue-800"
+
+  defp flash_class("error"),
+    do:
+      "bg-red-50 dark:bg-red-950 text-red-800 dark:text-red-200 border border-red-200 dark:border-red-800"
+
+  defp flash_class(_),
+    do:
+      "bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200 border border-gray-200 dark:border-gray-700"
 
   # ============================================
   # Icon (Heroicons via CSS class)
@@ -90,13 +98,20 @@ defmodule PhoenixBlog.Web.CoreComponents do
   def input(%{type: "select"} = assigns) do
     ~H"""
     <div>
-      <label :if={@label} for={@id} class="block text-sm font-medium text-gray-900 dark:text-gray-100 mb-1">
+      <label
+        :if={@label}
+        for={@id}
+        class="block text-sm font-medium text-gray-900 dark:text-gray-100 mb-1"
+      >
         {@label}
       </label>
       <select
         id={@id}
         name={@name}
-        class={@class || "w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"}
+        class={
+          @class ||
+            "w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+        }
         {@rest}
       >
         {Phoenix.HTML.Form.options_for_select(@options || [], @value)}
@@ -109,13 +124,20 @@ defmodule PhoenixBlog.Web.CoreComponents do
   def input(%{type: "textarea"} = assigns) do
     ~H"""
     <div>
-      <label :if={@label} for={@id} class="block text-sm font-medium text-gray-900 dark:text-gray-100 mb-1">
+      <label
+        :if={@label}
+        for={@id}
+        class="block text-sm font-medium text-gray-900 dark:text-gray-100 mb-1"
+      >
         {@label}
       </label>
       <textarea
         id={@id}
         name={@name}
-        class={@class || "w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"}
+        class={
+          @class ||
+            "w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+        }
         {@rest}
       >{Phoenix.HTML.Form.normalize_value("textarea", @value)}</textarea>
       <.error :for={msg <- @errors}>{msg}</.error>
@@ -126,7 +148,11 @@ defmodule PhoenixBlog.Web.CoreComponents do
   def input(assigns) do
     ~H"""
     <div>
-      <label :if={@label} for={@id} class="block text-sm font-medium text-gray-900 dark:text-gray-100 mb-1">
+      <label
+        :if={@label}
+        for={@id}
+        class="block text-sm font-medium text-gray-900 dark:text-gray-100 mb-1"
+      >
         {@label}
       </label>
       <input
@@ -134,7 +160,10 @@ defmodule PhoenixBlog.Web.CoreComponents do
         name={@name}
         id={@id}
         value={Phoenix.HTML.Form.normalize_value(@type, @value)}
-        class={@class || "w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"}
+        class={
+          @class ||
+            "w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+        }
         {@rest}
       />
       <.error :for={msg <- @errors}>{msg}</.error>

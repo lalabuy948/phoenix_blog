@@ -179,11 +179,11 @@ defmodule PhoenixBlog.Web.Live.Admin.Index do
               name="status"
               class="px-3 py-2 text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
             >
-            <option value="all" selected={is_nil(@status_filter)}>All Statuses</option>
-            <option value="draft" selected={@status_filter == "draft"}>Draft</option>
-            <option value="published" selected={@status_filter == "published"}>Published</option>
-            <option value="archived" selected={@status_filter == "archived"}>Archived</option>
-          </select>
+              <option value="all" selected={is_nil(@status_filter)}>All Statuses</option>
+              <option value="draft" selected={@status_filter == "draft"}>Draft</option>
+              <option value="published" selected={@status_filter == "published"}>Published</option>
+              <option value="archived" selected={@status_filter == "archived"}>Archived</option>
+            </select>
           </.form>
 
           <label class="flex items-center gap-2 text-sm text-gray-900 dark:text-gray-100 cursor-pointer">
@@ -192,15 +192,19 @@ defmodule PhoenixBlog.Web.Live.Admin.Index do
               phx-click="toggle_deleted"
               checked={@show_deleted}
               class="rounded border-gray-300 dark:border-gray-600 text-indigo-600 focus:ring-indigo-500"
-            />
-            Show deleted
+            /> Show deleted
           </label>
         </div>
 
         <%!-- Empty State --%>
-        <div :if={@posts_empty?} class="text-center py-16 bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700">
+        <div
+          :if={@posts_empty?}
+          class="text-center py-16 bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700"
+        >
           <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-1">No posts found</h3>
-          <p class="text-gray-500 dark:text-gray-400 mb-4">Get started by creating your first post.</p>
+          <p class="text-gray-500 dark:text-gray-400 mb-4">
+            Get started by creating your first post.
+          </p>
           <a
             href={"#{@dashboard_path}/new"}
             data-phx-link="redirect"
@@ -212,7 +216,10 @@ defmodule PhoenixBlog.Web.Live.Admin.Index do
         </div>
 
         <%!-- Posts Table --%>
-        <div :if={!@posts_empty?} class="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+        <div
+          :if={!@posts_empty?}
+          class="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden"
+        >
           <table class="w-full">
             <thead class="bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
               <tr>
@@ -233,7 +240,11 @@ defmodule PhoenixBlog.Web.Live.Admin.Index do
                 </th>
               </tr>
             </thead>
-            <tbody id="admin-posts" phx-update="stream" class="divide-y divide-gray-100 dark:divide-gray-800">
+            <tbody
+              id="admin-posts"
+              phx-update="stream"
+              class="divide-y divide-gray-100 dark:divide-gray-800"
+            >
               <tr
                 :for={{id, post} <- @streams.posts}
                 id={id}
@@ -261,10 +272,16 @@ defmodule PhoenixBlog.Web.Live.Admin.Index do
                   </div>
                 </td>
                 <td class="px-4 py-3">
-                  <span class={["px-2 py-1 rounded-full text-xs font-medium", status_badge_class(post.status)]}>
+                  <span class={[
+                    "px-2 py-1 rounded-full text-xs font-medium",
+                    status_badge_class(post.status)
+                  ]}>
                     {post.status}
                   </span>
-                  <span :if={Post.deleted?(post)} class="ml-1 px-2 py-1 rounded-full text-xs font-medium bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400">
+                  <span
+                    :if={Post.deleted?(post)}
+                    class="ml-1 px-2 py-1 rounded-full text-xs font-medium bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400"
+                  >
                     deleted
                   </span>
                 </td>
@@ -328,8 +345,10 @@ defmodule PhoenixBlog.Web.Live.Admin.Index do
             class={[
               "px-4 py-2 rounded-lg text-sm font-medium border",
               if(@page == 1,
-                do: "opacity-50 cursor-not-allowed border-gray-200 dark:border-gray-700 text-gray-400",
-                else: "border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800"
+                do:
+                  "opacity-50 cursor-not-allowed border-gray-200 dark:border-gray-700 text-gray-400",
+                else:
+                  "border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800"
               )
             ]}
           >
@@ -342,8 +361,10 @@ defmodule PhoenixBlog.Web.Live.Admin.Index do
             class={[
               "px-4 py-2 rounded-lg text-sm font-medium border",
               if(@page >= @total_pages,
-                do: "opacity-50 cursor-not-allowed border-gray-200 dark:border-gray-700 text-gray-400",
-                else: "border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800"
+                do:
+                  "opacity-50 cursor-not-allowed border-gray-200 dark:border-gray-700 text-gray-400",
+                else:
+                  "border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800"
               )
             ]}
           >
