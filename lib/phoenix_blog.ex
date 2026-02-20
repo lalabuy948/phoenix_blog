@@ -13,6 +13,7 @@ defmodule PhoenixBlog do
   import Ecto.Query, warn: false
 
   alias PhoenixBlog.Post
+  alias PhoenixBlog.PostLike
   alias PhoenixBlog.Repo, as: BlogRepo
 
   defp repo, do: BlogRepo.repo()
@@ -246,6 +247,82 @@ defmodule PhoenixBlog do
   """
   def change_post(%Post{} = post, attrs \\ %{}) do
     Post.changeset(post, attrs)
+  end
+
+  # ============================================
+  # Likes (requires likes_enabled: true config)
+  # ============================================
+
+  @doc """
+  Toggles a like for the given post by the given user.
+
+  Returns `{:ok, :liked}` or `{:ok, :unliked}`.
+  Requires `config :phoenix_blog, likes_enabled: true`.
+  """
+  def toggle_like(post_id, user_id) do
+    case repo().get_by(PostLike, post_id: post_id, user_id: user_id) do
+      nil ->
+        %PostLike{}
+        |> PostLike.changeset(%{post_id: post_id, user_id: user_id})
+        |> repo().insert()
+        |> case do
+          {:ok, _like} -> {:ok, :liked}
+          {:error, changeset} -> {:error, changeset}
+        end
+
+      %PostLike{} = like ->
+        repo().delete(like)
+        {:ok, :unliked}
+    end
+  end
+
+  @doc """
+  Returns true if the user has liked the post.
+  """
+  def liked_by_user?(_post_id, nil), do: false
+
+  def liked_by_user?(post_id, user_id) do
+    PostLike
+    |> where([l], l.post_id == ^post_id and l.user_id == ^user_id)
+    |> repo().exists?()
+  end
+
+  @doc """
+  Returns the like count for a single post.
+  """
+  def like_count(post_id) do
+    PostLike
+    |> where([l], l.post_id == ^post_id)
+    |> repo().aggregate(:count)
+  end
+
+  @doc """
+  Returns a MapSet of post IDs that the given user has liked from the provided list.
+  """
+  def liked_post_ids_for_user([], _user_id), do: MapSet.new()
+  def liked_post_ids_for_user(_post_ids, nil), do: MapSet.new()
+
+  def liked_post_ids_for_user(post_ids, user_id) when is_list(post_ids) do
+    PostLike
+    |> where([l], l.post_id in ^post_ids and l.user_id == ^user_id)
+    |> select([l], l.post_id)
+    |> repo().all()
+    |> MapSet.new()
+  end
+
+  @doc """
+  Returns a map of `%{post_id => like_count}` for a list of post IDs.
+  Efficient batch query for feed pages.
+  """
+  def like_counts_for_posts([]), do: %{}
+
+  def like_counts_for_posts(post_ids) when is_list(post_ids) do
+    PostLike
+    |> where([l], l.post_id in ^post_ids)
+    |> group_by([l], l.post_id)
+    |> select([l], {l.post_id, count(l.id)})
+    |> repo().all()
+    |> Map.new()
   end
 
   # ============================================

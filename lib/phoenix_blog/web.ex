@@ -34,6 +34,8 @@ defmodule PhoenixBlog.Web do
       import Phoenix.HTML
       import PhoenixBlog.Web.CoreComponents
       import PhoenixBlog.Web.BlogComponents
+      import PhoenixBlog.Web.Components.LikeButton
+      import PhoenixBlog.Web.Components.ShareButtons
       alias PhoenixBlog.Web.SEO
       alias Phoenix.LiveView.JS
     end

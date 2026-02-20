@@ -31,4 +31,22 @@ defmodule PhoenixBlog.Config do
   def locale do
     Application.get_env(:phoenix_blog, :locale, "en_US")
   end
+
+  def likes_enabled? do
+    Application.get_env(:phoenix_blog, :likes_enabled, false)
+  end
+
+  def share_enabled? do
+    Application.get_env(:phoenix_blog, :share_enabled, false)
+  end
+
+  def likes_table_name do
+    Application.get_env(:phoenix_blog, :likes_table_name, "phoenix_blog_post_likes")
+  end
+
+  def get_current_user do
+    Application.get_env(:phoenix_blog, :get_current_user, fn socket ->
+      socket.assigns[:current_user]
+    end)
+  end
 end

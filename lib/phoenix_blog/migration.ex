@@ -17,11 +17,13 @@ defmodule PhoenixBlog.Migration do
   """
 
   def up(opts \\ []) do
-    migrator().up(opts)
+    version = Keyword.get(opts, :version, 1)
+    migrator().up(version, opts)
   end
 
   def down(opts \\ []) do
-    migrator().down(opts)
+    version = Keyword.get(opts, :version, 1)
+    migrator().down(version, opts)
   end
 
   defp migrator do

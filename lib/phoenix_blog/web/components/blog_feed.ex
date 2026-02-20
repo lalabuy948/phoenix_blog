@@ -126,12 +126,24 @@ defmodule PhoenixBlog.Web.Components.BlogFeed do
     total_pages = ceil(total_count / per_page)
     all_tags = PhoenixBlog.list_published_tags()
 
+    likes_enabled = PhoenixBlog.Config.likes_enabled?()
+
+    like_counts =
+      if likes_enabled do
+        post_ids = Enum.map(posts, & &1.id)
+        PhoenixBlog.like_counts_for_posts(post_ids)
+      else
+        %{}
+      end
+
     socket
     |> assign(:total_count, total_count)
     |> assign(:total_pages, max(total_pages, 1))
     |> assign(:all_tags, all_tags)
     |> assign(:posts, posts)
     |> assign(:posts_empty?, posts == [])
+    |> assign(:likes_enabled, likes_enabled)
+    |> assign(:like_counts, like_counts)
   end
 
   @impl true
@@ -297,10 +309,20 @@ defmodule PhoenixBlog.Web.Components.BlogFeed do
                     {extract_excerpt(post)}
                   </p>
 
-                  <div class="flex items-center justify-between pt-3 border-t border-gray-100 dark:border-gray-800 text-xs text-gray-400 dark:text-gray-500">
-                    <span :if={post.author}>{post.author}</span>
-                    <span :if={post.published_at}>
-                      {Calendar.strftime(post.published_at, "%B %d, %Y")}
+                  <div class="grid grid-cols-3 items-center pt-3 border-t border-gray-100 dark:border-gray-800 text-xs text-gray-400 dark:text-gray-500">
+                    <span>{post.author}</span>
+                    <span class="text-center whitespace-nowrap">
+                      <%= if post.published_at do %>
+                        {Calendar.strftime(post.published_at, "%B %d, %Y")}
+                      <% end %>
+                    </span>
+                    <span class="inline-flex items-center gap-1 justify-end">
+                      <%= if @likes_enabled do %>
+                        <svg class="size-3.5" viewBox="0 0 20 20" fill="currentColor">
+                          <path d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" />
+                        </svg>
+                        {Map.get(@like_counts, post.id, 0)}
+                      <% end %>
                     </span>
                   </div>
                 </div>
@@ -353,7 +375,7 @@ defmodule PhoenixBlog.Web.Components.BlogFeed do
       <% end %>
 
       <%!-- Powered by --%>
-      <div class="pb-12 text-center">
+      <div class="py-12 text-center">
         <a
           href="https://github.com/lalabuy948/phoenix_blog"
           target="_blank"

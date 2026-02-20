@@ -221,13 +221,27 @@ const PhoenixBlogUrlUpdate = {
   }
 }
 
+const PhoenixBlogCopyLink = {
+  mounted() {
+    this.el.addEventListener("click", () => {
+      const url = this.el.dataset.url
+      navigator.clipboard.writeText(url).then(() => {
+        const original = this.el.innerHTML
+        this.el.innerHTML = '<svg class="size-4 text-green-500" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>'
+        setTimeout(() => { this.el.innerHTML = original }, 2000)
+      })
+    })
+  }
+}
+
 const PhoenixBlogHooks = {
   PhoenixBlogEditor,
   PhoenixBlogUrlUpdate,
+  PhoenixBlogCopyLink,
 }
 
 // ES module export
-export { PhoenixBlogHooks, PhoenixBlogEditor, PhoenixBlogUrlUpdate }
+export { PhoenixBlogHooks, PhoenixBlogEditor, PhoenixBlogUrlUpdate, PhoenixBlogCopyLink }
 
 // Global export for script tag usage
 if (typeof window !== "undefined") {

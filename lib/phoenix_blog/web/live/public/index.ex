@@ -17,7 +17,7 @@ defmodule PhoenixBlog.Web.Live.Public.Index do
   def render(assigns) do
     ~H"""
     <div class="min-h-screen bg-gray-50 dark:bg-gray-950">
-      <section class="py-12 sm:py-16">
+      <section>
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <.live_component
             module={BlogFeed}

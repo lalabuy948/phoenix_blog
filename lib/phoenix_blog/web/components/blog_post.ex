@@ -28,11 +28,16 @@ defmodule PhoenixBlog.Web.Components.BlogPost do
   attr :show_header, :boolean, default: true
   attr :show_featured_image, :boolean, default: true
   attr :show_tags_footer, :boolean, default: true
+  attr :like_count, :integer, default: nil
+  attr :liked, :boolean, default: false
+  attr :current_user, :any, default: nil
   attr :class, :string, default: nil
+
+  slot :inner_block
 
   def blog_post(assigns) do
     ~H"""
-    <article class={@class || "max-w-3xl mx-auto px-4 py-12 sm:py-16"}>
+    <article class={@class || "max-w-3xl mx-auto px-4 py-6 sm:pb-10"}>
       <%!-- Back link --%>
       <a
         :if={@show_back_link}
@@ -75,6 +80,28 @@ defmodule PhoenixBlog.Web.Components.BlogPost do
           <span :if={@post.published_at}>
             {Calendar.strftime(@post.published_at, "%B %d, %Y")}
           </span>
+          <%= if @like_count && @current_user do %>
+            <button
+              phx-click="toggle_like"
+              phx-value-post_id={@post.id}
+              class={[
+                "inline-flex items-center gap-1.5 cursor-pointer transition-colors",
+                if(@liked, do: "text-red-500", else: "text-gray-500 dark:text-gray-400 hover:text-red-500")
+              ]}
+            >
+              <svg class="size-4" viewBox="0 0 20 20" fill={if(@liked, do: "currentColor", else: "none")} stroke="currentColor" stroke-width="1.5">
+                <path d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" />
+              </svg>
+              {@like_count}
+            </button>
+          <% else %>
+            <span :if={@like_count} class="inline-flex items-center gap-1.5 text-gray-500 dark:text-gray-400">
+              <svg class="size-4" viewBox="0 0 20 20" fill="currentColor">
+                <path d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" />
+              </svg>
+              {@like_count}
+            </span>
+          <% end %>
         </div>
       </header>
 
@@ -82,6 +109,9 @@ defmodule PhoenixBlog.Web.Components.BlogPost do
       <div class="prose prose-lg dark:prose-invert max-w-none">
         <.render_editor_blocks blocks={Map.get(@post.body, "blocks", [])} />
       </div>
+
+      <%!-- Like / Share (injected by caller) --%>
+      {render_slot(@inner_block)}
 
       <%!-- Tags Footer --%>
       <div

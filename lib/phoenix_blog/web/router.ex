@@ -51,7 +51,7 @@ defmodule PhoenixBlog.Web.Router do
       show_view = Keyword.get(opts, :show_view, PhoenixBlog.Web.Live.Public.Show)
 
       on_mount =
-        [{PhoenixBlog.Web.Hooks.SetAssigns, {:set_blog_path, path}}] ++ custom_on_mount
+        custom_on_mount ++ [{PhoenixBlog.Web.Hooks.SetAssigns, {:set_blog_path, path}}]
 
       session_opts =
         [on_mount: on_mount]
@@ -87,7 +87,7 @@ defmodule PhoenixBlog.Web.Router do
       layout = Keyword.get(opts, :layout)
 
       on_mount =
-        [{PhoenixBlog.Web.Hooks.SetAssigns, {:set_dashboard_path, path}}] ++ custom_on_mount
+        custom_on_mount ++ [{PhoenixBlog.Web.Hooks.SetAssigns, {:set_dashboard_path, path}}]
 
       session_opts =
         [on_mount: on_mount]

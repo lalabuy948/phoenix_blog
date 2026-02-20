@@ -3,7 +3,9 @@ defmodule PhoenixBlog.Migration.Postgres do
 
   use Ecto.Migration
 
-  def up(_opts \\ []) do
+  def up(version \\ 1, opts \\ [])
+
+  def up(1, _opts) do
     table_name = PhoenixBlog.Config.table_name()
 
     create table(table_name) do
@@ -27,8 +29,30 @@ defmodule PhoenixBlog.Migration.Postgres do
     create index(table_name, [:deleted_at])
   end
 
-  def down(_opts \\ []) do
+  def up(2, _opts) do
+    likes_table = PhoenixBlog.Config.likes_table_name()
+    posts_table = PhoenixBlog.Config.table_name()
+
+    create table(likes_table) do
+      add :post_id, references(posts_table, on_delete: :delete_all), null: false
+      add :user_id, :bigint, null: false
+
+      timestamps(type: :utc_datetime, updated_at: false)
+    end
+
+    create unique_index(likes_table, [:post_id, :user_id])
+    create index(likes_table, [:user_id])
+  end
+
+  def down(version \\ 1, opts \\ [])
+
+  def down(1, _opts) do
     table_name = PhoenixBlog.Config.table_name()
     drop_if_exists table(table_name)
+  end
+
+  def down(2, _opts) do
+    likes_table = PhoenixBlog.Config.likes_table_name()
+    drop_if_exists table(likes_table)
   end
 end

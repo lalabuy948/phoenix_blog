@@ -8,6 +8,8 @@ Plug-and-play blog engine for Phoenix with [Editor.js](https://editorjs.io/) int
 - Admin dashboard with Editor.js rich text editor
 - Auto-save drafts — posts save automatically as you type
 - SEO out of the box — Open Graph, Twitter Cards, canonical URLs, and JSON-LD structured data
+- Optional likes — database-backed, auth-required toggle with like counts
+- Optional share buttons — Copy link, Twitter/X, Facebook, LinkedIn
 - Embeddable recent posts component for any page
 - Self-contained CSS and JS — loads its own assets automatically
 - Supports PostgreSQL, MySQL, and SQLite
@@ -159,6 +161,102 @@ config :phoenix_blog,
   twitter_site: "@myhandle",                       # Twitter/X site handle
   locale: "en_US"                                  # Open Graph locale
 ```
+
+## Likes & Share (Optional)
+
+Both features are opt-in and disabled by default. Enable either or both in your config:
+
+```elixir
+# config/config.exs
+config :phoenix_blog,
+  likes_enabled: true,
+  share_enabled: true
+```
+
+### Likes
+
+Likes require a user identity. Since the library doesn't own your users table, you provide a function that extracts the current user from the LiveView socket:
+
+```elixir
+# config/config.exs
+config :phoenix_blog,
+  likes_enabled: true,
+  get_current_user: fn socket ->
+    case socket.assigns[:current_scope] do
+      %{user: user} -> user
+      _ -> nil
+    end
+  end
+```
+
+The default `get_current_user` function returns `socket.assigns[:current_user]`, which works if your app assigns the user directly. The example above works with Phoenix 1.8's `mix phx.gen.auth` which uses `current_scope`.
+
+#### Likes migration
+
+Create a second migration for the likes table:
+
+```bash
+mix ecto.gen.migration add_phoenix_blog_likes
+```
+
+```elixir
+defmodule MyApp.Repo.Migrations.AddPhoenixBlogLikes do
+  use Ecto.Migration
+
+  def up, do: PhoenixBlog.Migration.up(version: 2)
+  def down, do: PhoenixBlog.Migration.down(version: 2)
+end
+```
+
+```bash
+mix ecto.migrate
+```
+
+#### Passing user identity to the blog
+
+The blog routes need an `on_mount` hook that assigns the current user to the socket. For example, with `mix phx.gen.auth`:
+
+```elixir
+# lib/my_app_web/live/user_auth_hook.ex
+defmodule MyAppWeb.UserAuthHook do
+  import Phoenix.Component
+
+  alias MyApp.Accounts
+  alias MyApp.Accounts.Scope
+
+  def on_mount(:maybe_assign_user, _params, session, socket) do
+    user =
+      case session do
+        %{"user_token" => token} ->
+          case Accounts.get_user_by_session_token(token) do
+            {user, _token_inserted_at} -> user
+            nil -> nil
+          end
+        _ -> nil
+      end
+
+    {:cont, assign(socket, :current_scope, Scope.for_user(user))}
+  end
+end
+```
+
+Then pass it to the blog routes:
+
+```elixir
+scope "/" do
+  pipe_through :browser
+  phoenix_blog "/blog",
+    on_mount: [{MyAppWeb.UserAuthHook, :maybe_assign_user}]
+end
+```
+
+When a user is logged in, they can toggle likes on posts. Anonymous visitors see the like count but cannot interact.
+
+### Share buttons
+
+When `share_enabled: true`, each blog post page shows social share buttons for Copy link, Twitter/X, Facebook, and LinkedIn. No database or authentication required.
+
+The Copy link button uses the `PhoenixBlogCopyLink` hook which is included in `PhoenixBlogHooks` — no additional JS setup needed if you followed the hooks setup in step 4.
 
 ## Usage
 
@@ -343,6 +441,10 @@ Returns the first paragraph's text, stripped of HTML tags and truncated with `..
 |--------|---------|-------------|
 | `:repo` | **(required)** | Your Ecto repo module |
 | `:table_name` | `"phoenix_blog_posts"` | Database table name |
+| `:likes_enabled` | `false` | Enable post likes |
+| `:share_enabled` | `false` | Enable social share buttons |
+| `:get_current_user` | `fn socket -> socket.assigns[:current_user] end` | Function to extract current user from socket |
+| `:likes_table_name` | `"phoenix_blog_post_likes"` | Database table name for likes |
 | `:site_name` | `"Blog"` | Site name for Open Graph and JSON-LD |
 | `:default_og_image` | `nil` | Fallback OG image URL when post has no featured image |
 | `:twitter_site` | `nil` | Twitter/X site handle (e.g. `"@myhandle"`) |
@@ -379,6 +481,8 @@ Returns the first paragraph's text, stripped of HTML tags and truncated with `..
 - Pagination
 - SEO-friendly slugs
 - Full SEO metadata (Open Graph, Twitter Cards, JSON-LD, canonical URLs)
+- Optional likes with per-post counts
+- Optional social share buttons (Copy link, Twitter/X, Facebook, LinkedIn)
 
 ### Admin Dashboard (`/admin/blog`)
 
