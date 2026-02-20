@@ -47,6 +47,7 @@ defmodule PhoenixBlog.Post do
     |> validate_slug()
     |> validate_length(:seo_description, max: 300)
     |> normalize_tags()
+    |> maybe_set_published_at()
     |> unique_constraint(:slug)
   end
 
@@ -81,6 +82,17 @@ defmodule PhoenixBlog.Post do
       message: "must contain only lowercase letters, numbers, and hyphens"
     )
     |> validate_length(:slug, min: 3, max: 200)
+  end
+
+  defp maybe_set_published_at(changeset) do
+    status = get_field(changeset, :status)
+    published_at = get_field(changeset, :published_at)
+
+    if status == :published and is_nil(published_at) do
+      put_change(changeset, :published_at, DateTime.utc_now(:second))
+    else
+      changeset
+    end
   end
 
   defp normalize_tags(changeset) do
