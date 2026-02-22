@@ -68,10 +68,24 @@ defmodule PhoenixBlog.Web.Live.Admin.Form do
   def handle_event("regenerate_slug", %{"title" => title}, socket) do
     slug = Post.slugify(title)
 
+    # Collect current form params and merge the new slug
+    current_params =
+      case socket.assigns.form.source do
+        %Ecto.Changeset{} = cs ->
+          cs.changes
+          |> Enum.into(%{}, fn {k, v} -> {Atom.to_string(k), v} end)
+
+        _ ->
+          %{}
+      end
+
+    post_params =
+      current_params
+      |> Map.put("title", title)
+      |> Map.put("slug", slug)
+
     changeset =
-      socket.assigns.form.source
-      |> Ecto.Changeset.put_change(:title, title)
-      |> Ecto.Changeset.put_change(:slug, slug)
+      PhoenixBlog.change_post(socket.assigns.post, post_params)
       |> Map.put(:action, :validate)
 
     socket = assign_form(socket, changeset)
@@ -84,8 +98,8 @@ defmodule PhoenixBlog.Web.Live.Admin.Form do
             |> assign(:post, post)
             |> assign(:last_saved_at, DateTime.utc_now())
 
-          {:error, _} ->
-            socket
+          {:error, error_changeset} ->
+            assign_form(socket, Map.put(error_changeset, :action, :validate))
         end
       else
         socket
