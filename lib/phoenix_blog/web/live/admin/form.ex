@@ -65,6 +65,44 @@ defmodule PhoenixBlog.Web.Live.Admin.Form do
   end
 
   @impl true
+  def handle_event("regenerate_slug", _, socket) do
+    title = Ecto.Changeset.get_field(PhoenixBlog.change_post(socket.assigns.post), :title) || ""
+
+    title =
+      case socket.assigns.form.source do
+        %Ecto.Changeset{} = cs -> Ecto.Changeset.get_field(cs, :title) || title
+        _ -> title
+      end
+
+    slug = Post.slugify(title)
+
+    changeset =
+      PhoenixBlog.change_post(socket.assigns.post, %{"slug" => slug})
+      |> Map.put(:action, :validate)
+
+    socket =
+      socket
+      |> assign_form(changeset)
+
+    socket =
+      if socket.assigns.action == :edit do
+        case PhoenixBlog.update_post(socket.assigns.post, %{"slug" => slug}) do
+          {:ok, post} ->
+            socket
+            |> assign(:post, post)
+            |> assign(:last_saved_at, DateTime.utc_now())
+
+          {:error, _} ->
+            socket
+        end
+      else
+        socket
+      end
+
+    {:noreply, socket}
+  end
+
+  @impl true
   def handle_event("editor_change", %{"body" => body}, socket) do
     socket =
       if socket.assigns.action == :edit do
@@ -323,13 +361,27 @@ defmodule PhoenixBlog.Web.Live.Admin.Form do
                       ]}
                       required
                     />
-                    <.input
-                      field={@form[:slug]}
-                      type="text"
-                      label="URL Slug"
-                      required
-                      placeholder="my-blog-post"
-                    />
+                    <div>
+                      <div class="flex items-end gap-2">
+                        <div class="flex-1">
+                          <.input
+                            field={@form[:slug]}
+                            type="text"
+                            label="URL Slug"
+                            required
+                            placeholder="my-blog-post"
+                          />
+                        </div>
+                        <button
+                          type="button"
+                          phx-click="regenerate_slug"
+                          title="Regenerate slug from title"
+                          class="mb-[2px] inline-flex items-center justify-center size-9 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-700 dark:hover:text-gray-200 transition-colors shrink-0"
+                        >
+                          <.icon name="hero-arrow-path-mini" class="size-4" />
+                        </button>
+                      </div>
+                    </div>
                     <.input
                       field={@form[:author]}
                       type="text"
