@@ -52,6 +52,71 @@
   color: var(--phxblog-text, #111827) !important;
 }
 
+/* Editor.js popover / block-toolbar dark theme */
+.ce-popover,
+.ce-conversion-toolbar,
+.ce-inline-toolbar,
+.ce-settings {
+  background-color: var(--phxblog-bg, #ffffff) !important;
+  border-color: var(--phxblog-border, #e5e7eb) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12) !important;
+  color: var(--phxblog-text, #111827) !important;
+}
+
+.ce-popover-item {
+  color: var(--phxblog-text, #111827) !important;
+}
+
+.ce-popover-item:hover {
+  background-color: var(--phxblog-bg-hover, #f3f4f6) !important;
+}
+
+.ce-popover-item__icon {
+  background-color: var(--phxblog-bg-hover, #f3f4f6) !important;
+  color: var(--phxblog-text, #111827) !important;
+  border-color: var(--phxblog-border, #e5e7eb) !important;
+}
+
+.ce-popover-item__title {
+  color: var(--phxblog-text, #111827) !important;
+}
+
+.ce-popover__nothing-found-message {
+  color: var(--phxblog-muted, #6b7280) !important;
+}
+
+/* Search field inside popover */
+.cdx-search-field {
+  background-color: var(--phxblog-input-bg, #f9fafb) !important;
+  border-color: var(--phxblog-border, #e5e7eb) !important;
+}
+
+.cdx-search-field__icon {
+  color: var(--phxblog-muted, #6b7280) !important;
+}
+
+.cdx-search-field__input {
+  background-color: transparent !important;
+  color: var(--phxblog-text, #111827) !important;
+}
+
+.cdx-search-field__input::placeholder {
+  color: var(--phxblog-placeholder, #9ca3af) !important;
+}
+
+/* Inline toolbar buttons */
+.ce-inline-tool,
+.ce-conversion-tool,
+.ce-settings__button {
+  color: var(--phxblog-text, #111827) !important;
+}
+
+.ce-inline-tool:hover,
+.ce-conversion-tool:hover,
+.ce-settings__button:hover {
+  background-color: var(--phxblog-bg-hover, #f3f4f6) !important;
+}
+
 /* Line clamp utilities (for browsers without Tailwind) */
 .line-clamp-2 {
   display: -webkit-box;

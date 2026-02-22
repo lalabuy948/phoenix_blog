@@ -78,6 +78,10 @@ const PhoenixBlogEditor = {
           this.el.style.setProperty("--phxblog-text", isDark ? "#f3f4f6" : "#111827")
           this.el.style.setProperty("--phxblog-muted", isDark ? "#9ca3af" : "#6b7280")
           this.el.style.setProperty("--phxblog-placeholder", isDark ? "#6b7280" : "#9ca3af")
+          this.el.style.setProperty("--phxblog-bg", isDark ? "#1f2937" : "#ffffff")
+          this.el.style.setProperty("--phxblog-bg-hover", isDark ? "#374151" : "#f3f4f6")
+          this.el.style.setProperty("--phxblog-border", isDark ? "#374151" : "#e5e7eb")
+          this.el.style.setProperty("--phxblog-input-bg", isDark ? "#111827" : "#f9fafb")
           return
         }
       }
