@@ -275,7 +275,7 @@ defmodule PhoenixBlog.Web.Components.BlogFeed do
         <div class={@grid_class}>
           <%= for post <- @posts do %>
             <%= if assigns[:post_card] && assigns[:post_card] != [] do %>
-              {render_slot(@post_card, post)}
+              {render_slot(@post_card, Map.put(post, :like_count, Map.get(@like_counts, post.id, 0)))}
             <% else %>
               <a
                 href={"#{@blog_path}/#{post.slug}"}

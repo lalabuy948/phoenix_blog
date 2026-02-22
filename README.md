@@ -130,6 +130,8 @@ Alternatively, create a dedicated blog root layout (e.g. `blog_root.html.heex`) 
 phoenix_blog "/blog", root_layout: {MyAppWeb.Layouts, :blog_root}
 ```
 
+![article preview](github/article_preview.png)
+
 ## SEO
 
 Every blog page ships with complete SEO metadata — zero configuration required.

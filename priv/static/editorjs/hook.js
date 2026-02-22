@@ -96,7 +96,7 @@ const PhoenixBlogEditor = {
   initEditor() {
     const EditorJSCore = window.EditorJS
     const Header = window.Header
-    const List = window.List
+    const EditorjsList = window.EditorjsList
     const Quote = window.Quote
     const CodeTool = window.CodeTool
     const Table = window.Table
@@ -132,8 +132,8 @@ const PhoenixBlogEditor = {
               defaultLevel: 2,
             },
           } : undefined,
-          list: List ? {
-            class: List,
+          list: EditorjsList ? {
+            class: EditorjsList,
             inlineToolbar: true,
             config: {
               defaultStyle: "unordered",

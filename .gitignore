@@ -21,3 +21,4 @@ phoenix_blog-*.tar
 
 .DS_Store
 **/*.DS_Store
+phoenix_sqlite/*

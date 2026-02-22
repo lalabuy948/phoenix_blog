@@ -100,24 +100,26 @@ defmodule PhoenixBlog.Web.BlogComponents do
     """
   end
 
-  # List
+  # List (v2 nested format with ordered/unordered/checklist styles, and v1 flat format)
   defp render_block(%{"type" => "list", "data" => %{"style" => style, "items" => items}})
        when is_list(items) do
-    assigns = %{style: style, items: items}
+    normalized = normalize_list_items(items)
+    assigns = %{style: style, items: normalized}
 
     ~H"""
-    <%= if @style == "ordered" do %>
-      <ol class="list-decimal list-outside ml-6 space-y-2">
-        <li :for={item <- @items} class="text-gray-700 dark:text-gray-300 text-lg pl-2">
-          {raw(item)}
-        </li>
-      </ol>
-    <% else %>
-      <ul class="list-disc list-outside ml-6 space-y-2">
-        <li :for={item <- @items} class="text-gray-700 dark:text-gray-300 text-lg pl-2">
-          {raw(item)}
-        </li>
-      </ul>
+    <%= cond do %>
+      <% @style == "checklist" -> %>
+        <div class="my-4 space-y-2">
+          <.render_checklist_items items={@items} />
+        </div>
+      <% @style == "ordered" -> %>
+        <ol class="list-decimal list-outside ml-6 space-y-2">
+          <.render_list_items items={@items} style={@style} />
+        </ol>
+      <% true -> %>
+        <ul class="list-disc list-outside ml-6 space-y-2">
+          <.render_list_items items={@items} style={@style} />
+        </ul>
     <% end %>
     """
   end
@@ -170,6 +172,19 @@ defmodule PhoenixBlog.Web.BlogComponents do
           </tr>
         </tbody>
       </table>
+    </div>
+    """
+  end
+
+  # Checklist (standalone @editorjs/checklist plugin, legacy format)
+  defp render_block(%{"type" => "checklist", "data" => %{"items" => items}})
+       when is_list(items) do
+    normalized = normalize_list_items(items)
+    assigns = %{items: normalized}
+
+    ~H"""
+    <div class="my-4 space-y-2">
+      <.render_checklist_items items={@items} />
     </div>
     """
   end
@@ -274,5 +289,86 @@ defmodule PhoenixBlog.Web.BlogComponents do
       Unsupported block type: {Map.get(@block, "type", "unknown")}
     </div>
     """
+  end
+
+  # List helper components
+
+  defp render_list_items(assigns) do
+    ~H"""
+    <li :for={item <- @items} class="text-gray-700 dark:text-gray-300 text-lg pl-2">
+      {raw(item.content)}
+      <%= if item.children != [] do %>
+        <%= if @style == "ordered" do %>
+          <ol class="list-decimal list-outside ml-6 space-y-1 mt-1">
+            <.render_list_items items={item.children} style={@style} />
+          </ol>
+        <% else %>
+          <ul class="list-disc list-outside ml-6 space-y-1 mt-1">
+            <.render_list_items items={item.children} style={@style} />
+          </ul>
+        <% end %>
+      <% end %>
+    </li>
+    """
+  end
+
+  defp render_checklist_items(assigns) do
+    ~H"""
+    <%= for item <- @items do %>
+      <div class="flex items-start gap-3">
+        <div class={[
+          "mt-1 flex-shrink-0 w-5 h-5 rounded border-2 flex items-center justify-center",
+          if(item.checked,
+            do: "bg-indigo-500 border-indigo-500",
+            else: "border-gray-300 dark:border-gray-600"
+          )
+        ]}>
+          <svg
+            :if={item.checked}
+            class="w-3 h-3 text-white"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="3"
+            stroke="currentColor"
+          >
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+          </svg>
+        </div>
+        <div>
+          <span class={[
+            "text-lg leading-relaxed",
+            if(item.checked,
+              do: "text-gray-400 dark:text-gray-500 line-through",
+              else: "text-gray-700 dark:text-gray-300"
+            )
+          ]}>
+            {raw(item.content)}
+          </span>
+          <div :if={item.children != []} class="mt-1 ml-2 space-y-2">
+            <.render_checklist_items items={item.children} />
+          </div>
+        </div>
+      </div>
+    <% end %>
+    """
+  end
+
+  # Normalizes list items from v1 (flat strings) or v2 (nested objects) format
+  defp normalize_list_items(items) do
+    Enum.map(items, fn
+      item when is_binary(item) ->
+        %{content: item, checked: false, children: []}
+
+      %{"content" => content} = item ->
+        checked = get_in(item, ["meta", "checked"]) == true
+        children = normalize_list_items(Map.get(item, "items", []))
+        %{content: content, checked: checked, children: children}
+
+      %{"text" => text} = item ->
+        %{content: text, checked: Map.get(item, "checked", false), children: []}
+
+      _ ->
+        %{content: "", checked: false, children: []}
+    end)
   end
 end
