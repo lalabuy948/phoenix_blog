@@ -238,14 +238,25 @@ const PhoenixBlogCopyLink = {
   }
 }
 
+const PhoenixBlogRegenerateSlug = {
+  mounted() {
+    this.el.addEventListener("click", () => {
+      const titleInput = this.el.closest("form")?.querySelector('[name$="[title]"]')
+      const title = titleInput ? titleInput.value : ""
+      this.pushEvent("regenerate_slug", { title })
+    })
+  }
+}
+
 const PhoenixBlogHooks = {
   PhoenixBlogEditor,
   PhoenixBlogUrlUpdate,
   PhoenixBlogCopyLink,
+  PhoenixBlogRegenerateSlug,
 }
 
 // ES module export
-export { PhoenixBlogHooks, PhoenixBlogEditor, PhoenixBlogUrlUpdate, PhoenixBlogCopyLink }
+export { PhoenixBlogHooks, PhoenixBlogEditor, PhoenixBlogUrlUpdate, PhoenixBlogCopyLink, PhoenixBlogRegenerateSlug }
 
 // Global export for script tag usage
 if (typeof window !== "undefined") {

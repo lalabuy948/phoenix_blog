@@ -65,24 +65,16 @@ defmodule PhoenixBlog.Web.Live.Admin.Form do
   end
 
   @impl true
-  def handle_event("regenerate_slug", _, socket) do
-    title = Ecto.Changeset.get_field(PhoenixBlog.change_post(socket.assigns.post), :title) || ""
-
-    title =
-      case socket.assigns.form.source do
-        %Ecto.Changeset{} = cs -> Ecto.Changeset.get_field(cs, :title) || title
-        _ -> title
-      end
-
+  def handle_event("regenerate_slug", %{"title" => title}, socket) do
     slug = Post.slugify(title)
 
     changeset =
-      PhoenixBlog.change_post(socket.assigns.post, %{"slug" => slug})
+      socket.assigns.form.source
+      |> Ecto.Changeset.put_change(:title, title)
+      |> Ecto.Changeset.put_change(:slug, slug)
       |> Map.put(:action, :validate)
 
-    socket =
-      socket
-      |> assign_form(changeset)
+    socket = assign_form(socket, changeset)
 
     socket =
       if socket.assigns.action == :edit do
@@ -374,7 +366,8 @@ defmodule PhoenixBlog.Web.Live.Admin.Form do
                         </div>
                         <button
                           type="button"
-                          phx-click="regenerate_slug"
+                          id="regenerate-slug-btn"
+                          phx-hook="PhoenixBlogRegenerateSlug"
                           title="Regenerate slug from title"
                           class="mb-[2px] inline-flex items-center justify-center size-9 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-700 dark:hover:text-gray-200 transition-colors shrink-0"
                         >
