@@ -92,6 +92,21 @@ defmodule PhoenixBlog.Web.Live.Admin.Index do
     end
   end
 
+  def handle_event("permanent_delete", %{"id" => id}, socket) do
+    post = PhoenixBlog.get_post!(id)
+
+    case PhoenixBlog.delete_post(post) do
+      {:ok, _post} ->
+        {:noreply,
+         socket
+         |> put_flash(:info, "Post permanently deleted")
+         |> load_posts()}
+
+      {:error, _changeset} ->
+        {:noreply, put_flash(socket, :error, "Failed to permanently delete post")}
+    end
+  end
+
   def handle_event("prev_page", _, socket) do
     page = max(socket.assigns.page - 1, 1)
 
@@ -326,6 +341,15 @@ defmodule PhoenixBlog.Web.Live.Admin.Index do
                       class="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium"
                     >
                       Restore
+                    </button>
+                    <button
+                      :if={Post.deleted?(post)}
+                      phx-click="permanent_delete"
+                      phx-value-id={post.id}
+                      data-confirm="This will permanently delete the post. This action cannot be undone. Are you sure?"
+                      class="text-xs text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 font-medium"
+                    >
+                      Permanently Delete
                     </button>
                   </div>
                 </td>
