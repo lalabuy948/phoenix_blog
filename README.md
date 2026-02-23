@@ -1,5 +1,10 @@
 # PhoenixBlog
 
+<p align="center">
+  <a title="Latest release" href="https://hex.pm/packages/phoenix_blog"><img src="https://img.shields.io/hexpm/v/phoenix_blog.svg" alt="Latest release" /></a>
+  <a title="View documentation" href="https://hexdocs.pm/phoenix_blog"><img src="https://img.shields.io/badge/hex.pm-docs-blue.svg" alt="View documentation" /></a>
+</p>
+
 ![](github/blog_page_search.png)
 
 Plug-and-play blog engine for Phoenix with [Editor.js](https://editorjs.io/) integration.
