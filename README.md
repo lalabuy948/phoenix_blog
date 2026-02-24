@@ -5,6 +5,10 @@
   <a title="View documentation" href="https://hexdocs.pm/phoenix_blog"><img src="https://img.shields.io/badge/hex.pm-docs-blue.svg" alt="View documentation" /></a>
 </p>
 
+<p align="center">
+  <a title="examples" href="EXAMPLES.md"><img src="https://img.shields.io/badge/Examples!-37a779?style=for-the-badge"></a>
+</p>
+
 ![](github/blog_page_search.png)
 
 Plug-and-play blog engine for Phoenix with [Editor.js](https://editorjs.io/) integration.
