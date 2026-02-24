@@ -110,28 +110,25 @@ defmodule PhoenixBlog.Web.Components.BlogPost do
         <.render_editor_blocks blocks={Map.get(@post.body, "blocks", [])} />
       </div>
 
-      <%!-- Like / Share (injected by caller) --%>
-      {render_slot(@inner_block)}
-
       <%!-- Tags Footer --%>
       <div
         :if={@show_tags_footer && @post.tags != []}
-        class="border-t border-gray-200 dark:border-gray-700 pt-8 mt-12"
+        class="flex flex-wrap gap-2 mt-10"
       >
-        <h3 class="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-3">Tags</h3>
-        <div class="flex flex-wrap gap-2">
-          <a
-            :for={tag <- @post.tags}
-            href={"#{@blog_path}?tag=#{tag}"}
-            class="px-3 py-1 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-full text-sm hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
-          >
-            {tag}
-          </a>
-        </div>
+        <a
+          :for={tag <- @post.tags}
+          href={"#{@blog_path}?tag=#{tag}"}
+          class="px-3 py-1 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-full text-sm hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+        >
+          {tag}
+        </a>
       </div>
 
+      <%!-- Like / Share (injected by caller) --%>
+      {render_slot(@inner_block)}
+
       <%!-- Back to blog --%>
-      <div :if={@show_back_link} class="mt-12 text-center">
+      <div :if={@show_back_link} class="mt-10 text-center">
         <a
           href={@blog_path}
           onclick="if (history.length > 1) { history.back(); return false; }"
