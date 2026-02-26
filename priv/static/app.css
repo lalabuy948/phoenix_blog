@@ -117,6 +117,23 @@
   background-color: var(--phxblog-bg-hover, #f3f4f6) !important;
 }
 
+/* Conversion toolbar icon boxes & label */
+.ce-conversion-tool__icon {
+  background-color: var(--phxblog-bg-hover, #f3f4f6) !important;
+  color: var(--phxblog-text, #111827) !important;
+  border-color: var(--phxblog-border, #e5e7eb) !important;
+}
+
+.ce-conversion-toolbar__label {
+  color: var(--phxblog-muted, #6b7280) !important;
+}
+
+/* Inline toolbar icon SVGs */
+.ce-inline-tool svg,
+.ce-conversion-tool__icon svg {
+  color: var(--phxblog-text, #111827) !important;
+}
+
 /* Line clamp utilities (for browsers without Tailwind) */
 .line-clamp-2 {
   display: -webkit-box;

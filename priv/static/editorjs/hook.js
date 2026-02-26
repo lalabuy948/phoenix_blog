@@ -67,26 +67,50 @@ const PhoenixBlogEditor = {
     let el = this.el.parentElement
     while (el) {
       const bg = getComputedStyle(el).backgroundColor
-      const match = bg.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?/)
-      if (match) {
-        const alpha = match[4] !== undefined ? Number(match[4]) : 1
-        if (alpha > 0.5) {
-          const r = Number(match[1]), g = Number(match[2]), b = Number(match[3])
-          const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255
-          const isDark = luminance < 0.5
-          // Set CSS custom properties directly — no selector matching needed
-          this.el.style.setProperty("--phxblog-text", isDark ? "#f3f4f6" : "#111827")
-          this.el.style.setProperty("--phxblog-muted", isDark ? "#9ca3af" : "#6b7280")
-          this.el.style.setProperty("--phxblog-placeholder", isDark ? "#6b7280" : "#9ca3af")
-          this.el.style.setProperty("--phxblog-bg", isDark ? "#1f2937" : "#ffffff")
-          this.el.style.setProperty("--phxblog-bg-hover", isDark ? "#374151" : "#f3f4f6")
-          this.el.style.setProperty("--phxblog-border", isDark ? "#374151" : "#e5e7eb")
-          this.el.style.setProperty("--phxblog-input-bg", isDark ? "#111827" : "#f9fafb")
-          return
-        }
+      const rgba = this._parseColor(bg)
+      if (rgba && rgba.a > 0.5) {
+        const luminance = (0.299 * rgba.r + 0.587 * rgba.g + 0.114 * rgba.b) / 255
+        this._applyTheme(luminance < 0.5)
+        return
       }
       el = el.parentElement
     }
+    // Fallback: check media query and DOM hints
+    const isDark = window.matchMedia("(prefers-color-scheme: dark)").matches
+      || document.documentElement.classList.contains("dark")
+      || document.body?.classList.contains("dark")
+      || document.documentElement.getAttribute("data-theme") === "dark"
+    this._applyTheme(isDark)
+  },
+
+  _parseColor(str) {
+    if (!str || str === "transparent") return null
+    // comma-separated: rgb(r, g, b) / rgba(r, g, b, a)
+    let m = str.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)/)
+    if (m) return { r: +m[1], g: +m[2], b: +m[3], a: m[4] != null ? +m[4] : 1 }
+    // space-separated: rgb(r g b) / rgb(r g b / a)
+    m = str.match(/rgba?\(([\d.]+)\s+([\d.]+)\s+([\d.]+)(?:\s*\/\s*([\d.]+))?\)/)
+    if (m) return { r: +m[1], g: +m[2], b: +m[3], a: m[4] != null ? +m[4] : 1 }
+    // oklch / hsl / color() — canvas fallback
+    try {
+      const c = document.createElement("canvas")
+      c.width = c.height = 1
+      const ctx = c.getContext("2d")
+      ctx.fillStyle = str
+      ctx.fillRect(0, 0, 1, 1)
+      const [r, g, b, a] = ctx.getImageData(0, 0, 1, 1).data
+      return { r, g, b, a: a / 255 }
+    } catch { return null }
+  },
+
+  _applyTheme(isDark) {
+    this.el.style.setProperty("--phxblog-text", isDark ? "#f3f4f6" : "#111827")
+    this.el.style.setProperty("--phxblog-muted", isDark ? "#9ca3af" : "#6b7280")
+    this.el.style.setProperty("--phxblog-placeholder", isDark ? "#6b7280" : "#9ca3af")
+    this.el.style.setProperty("--phxblog-bg", isDark ? "#1f2937" : "#ffffff")
+    this.el.style.setProperty("--phxblog-bg-hover", isDark ? "#374151" : "#f3f4f6")
+    this.el.style.setProperty("--phxblog-border", isDark ? "#374151" : "#e5e7eb")
+    this.el.style.setProperty("--phxblog-input-bg", isDark ? "#111827" : "#f9fafb")
   },
 
   _watchTheme() {
