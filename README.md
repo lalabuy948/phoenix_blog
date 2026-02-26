@@ -189,9 +189,10 @@ config :phoenix_blog,
 Likes require a user identity. Since the library doesn't own your users table, you provide a function that extracts the current user from the LiveView socket:
 
 ```elixir
-# config/config.exs
+# config/runtime.exs
 config :phoenix_blog,
   likes_enabled: true,
+  # config/runtime.exs, in config/config.exs this function wont work
   get_current_user: fn socket ->
     case socket.assigns[:current_scope] do
       %{user: user} -> user
