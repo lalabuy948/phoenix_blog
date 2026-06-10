@@ -46,6 +46,46 @@ async function loadEditorScripts() {
   }
 }
 
+// Shared color parser — handles rgb(), rgba(), space-separated, oklch, hsl, etc.
+function parseColor(str) {
+  if (!str || str === "transparent") return null
+  // comma-separated: rgb(r, g, b) / rgba(r, g, b, a)
+  let m = str.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)/)
+  if (m) return { r: +m[1], g: +m[2], b: +m[3], a: m[4] != null ? +m[4] : 1 }
+  // space-separated: rgb(r g b) / rgb(r g b / a)
+  m = str.match(/rgba?\(([\d.]+)\s+([\d.]+)\s+([\d.]+)(?:\s*\/\s*([\d.]+))?\)/)
+  if (m) return { r: +m[1], g: +m[2], b: +m[3], a: m[4] != null ? +m[4] : 1 }
+  // oklch / hsl / color() — canvas fallback
+  try {
+    const c = document.createElement("canvas")
+    c.width = c.height = 1
+    const ctx = c.getContext("2d")
+    ctx.fillStyle = str
+    ctx.fillRect(0, 0, 1, 1)
+    const [r, g, b, a] = ctx.getImageData(0, 0, 1, 1).data
+    return { r, g, b, a: a / 255 }
+  } catch { return null }
+}
+
+// Shared: detect whether the element sits on a dark background
+function detectDarkBackground(el) {
+  let node = el.parentElement
+  while (node) {
+    const bg = getComputedStyle(node).backgroundColor
+    const rgba = parseColor(bg)
+    if (rgba && rgba.a > 0.5) {
+      const luminance = (0.299 * rgba.r + 0.587 * rgba.g + 0.114 * rgba.b) / 255
+      return luminance < 0.5
+    }
+    node = node.parentElement
+  }
+  // Fallback: check media query and DOM hints
+  return window.matchMedia("(prefers-color-scheme: dark)").matches
+    || document.documentElement.classList.contains("dark")
+    || document.body?.classList.contains("dark")
+    || document.documentElement.getAttribute("data-theme") === "dark"
+}
+
 const PhoenixBlogEditor = {
   async mounted() {
     // Detect after styles have settled
@@ -63,44 +103,7 @@ const PhoenixBlogEditor = {
   },
 
   _detectTheme() {
-    // Walk up to find the nearest ancestor with an opaque background
-    let el = this.el.parentElement
-    while (el) {
-      const bg = getComputedStyle(el).backgroundColor
-      const rgba = this._parseColor(bg)
-      if (rgba && rgba.a > 0.5) {
-        const luminance = (0.299 * rgba.r + 0.587 * rgba.g + 0.114 * rgba.b) / 255
-        this._applyTheme(luminance < 0.5)
-        return
-      }
-      el = el.parentElement
-    }
-    // Fallback: check media query and DOM hints
-    const isDark = window.matchMedia("(prefers-color-scheme: dark)").matches
-      || document.documentElement.classList.contains("dark")
-      || document.body?.classList.contains("dark")
-      || document.documentElement.getAttribute("data-theme") === "dark"
-    this._applyTheme(isDark)
-  },
-
-  _parseColor(str) {
-    if (!str || str === "transparent") return null
-    // comma-separated: rgb(r, g, b) / rgba(r, g, b, a)
-    let m = str.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)/)
-    if (m) return { r: +m[1], g: +m[2], b: +m[3], a: m[4] != null ? +m[4] : 1 }
-    // space-separated: rgb(r g b) / rgb(r g b / a)
-    m = str.match(/rgba?\(([\d.]+)\s+([\d.]+)\s+([\d.]+)(?:\s*\/\s*([\d.]+))?\)/)
-    if (m) return { r: +m[1], g: +m[2], b: +m[3], a: m[4] != null ? +m[4] : 1 }
-    // oklch / hsl / color() — canvas fallback
-    try {
-      const c = document.createElement("canvas")
-      c.width = c.height = 1
-      const ctx = c.getContext("2d")
-      ctx.fillStyle = str
-      ctx.fillRect(0, 0, 1, 1)
-      const [r, g, b, a] = ctx.getImageData(0, 0, 1, 1).data
-      return { r, g, b, a: a / 255 }
-    } catch { return null }
+    this._applyTheme(detectDarkBackground(this.el))
   },
 
   _applyTheme(isDark) {

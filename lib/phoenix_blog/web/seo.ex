@@ -107,7 +107,7 @@ defmodule PhoenixBlog.Web.SEO do
       description: "#{site_name} - Latest articles and posts",
       canonical_url: canonical,
       og_type: "website",
-      og_image: Config.default_og_image(),
+      og_image: absolute_url(Config.default_og_image(), uri),
       site_name: site_name,
       locale: Config.locale(),
       twitter_card: if(Config.default_og_image(), do: "summary_large_image", else: "summary"),
@@ -129,7 +129,7 @@ defmodule PhoenixBlog.Web.SEO do
     canonical = canonical_url(uri)
     site_name = Config.site_name()
     description = post_description(post)
-    image = post.featured_image_url || Config.default_og_image()
+    image = absolute_url(post.featured_image_url || Config.default_og_image(), uri)
 
     %{
       title: post.title,
@@ -209,6 +209,20 @@ defmodule PhoenixBlog.Web.SEO do
     parsed = URI.parse(uri)
     URI.to_string(%{parsed | query: nil, fragment: nil})
   end
+
+  # Open Graph and Twitter Card images must be absolute URLs (with scheme and
+  # host), otherwise crawlers like Telegram/WhatsApp cannot fetch the preview.
+  # Resolve relative image paths against the current request URI.
+  defp absolute_url(nil, _uri), do: nil
+
+  defp absolute_url(image, uri) when is_binary(image) and is_binary(uri) do
+    case URI.parse(image) do
+      %URI{scheme: scheme} when is_binary(scheme) -> image
+      _ -> uri |> URI.merge(image) |> URI.to_string()
+    end
+  end
+
+  defp absolute_url(image, _uri), do: image
 
   defp format_datetime(%DateTime{} = dt), do: DateTime.to_iso8601(dt)
   defp format_datetime(_), do: nil
