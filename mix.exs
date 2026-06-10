@@ -1,7 +1,7 @@
 defmodule PhoenixBlog.MixProject do
   use Mix.Project
 
-  @version "0.1.5"
+  @version "0.1.6"
   @source_url "https://github.com/lalabuy948/phoenix_blog"
 
   def project do
