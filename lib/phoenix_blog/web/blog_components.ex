@@ -148,7 +148,7 @@ defmodule PhoenixBlog.Web.BlogComponents do
 
     ~H"""
     <div class="my-6 rounded-lg overflow-hidden">
-      <pre class="bg-gray-900 text-gray-100 p-4 overflow-x-auto" phx-no-curly-interpolation><code class="text-sm font-mono">{@code}</code></pre>
+      <pre class="bg-gray-900 text-gray-100 p-4 overflow-x-auto"><code class="text-sm font-mono">{@code}</code></pre>
     </div>
     """
   end
